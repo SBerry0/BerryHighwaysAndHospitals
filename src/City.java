@@ -41,7 +41,15 @@ public class City {
         return possibleConnections;
     }
 
+    public int getCityNum() {
+        return cityNum;
+    }
+
     public void giveHospital() {
         hasHospital = true;
+    }
+
+    public void giveHighway() {
+        hasHighway = true;
     }
 }
