@@ -1,9 +1,9 @@
 Name: YOUR NAME HERE
 
-| Date    |  Time  |                                     Update |
-|:--------|:------:|-------------------------------------------:|
-| April 5 | 9-10pm | I tried to write abstract, efficient code. |
-|         |        |                                            |
+| Date   |   Time    |                                                                                                                                                                                                                                                                                                                                                                                                                              Update |
+|:-------|:---------:|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| Sep 10 | 1:45-2:30 | I wasn't really sure how to approach the code, so I wanted to work on making the data that we're given usable by making classes for each city to tell if it has a hospital in it and if what connections it could have. I think I have to split the problem up into multiple smaller parts of the same thing by focusing on all groups of cities that are connected to each other, but I don't know yet how to create the clusters. |
+|        |           |                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 
 
 To add a new row to the table, click into a cell and then hit shift-enter.
