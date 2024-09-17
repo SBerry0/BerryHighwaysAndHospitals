@@ -46,17 +46,10 @@ public class HighwaysAndHospitals {
         System.out.println("Highway cost:" + highwayCost);
         System.out.println("Num Cities: " + n);
         if (hospitalCost < highwayCost) {
-            System.out.println("all lonely");
             return (long) hospitalCost * n;
         }
 
-        int numHospitals = 0,
-            numHighways = 0;
-
         ArrayList<Integer>[] map = makeMap(cities, n);
-        for (int i = 1; i < 5; i++) {
-//            System.out.println("kachow " + map[i]);
-        }
 //        System.out.println(java.util.Arrays.toString(map));
         // 1-indexed
         City[] cityClasses = new City[n+1];
@@ -64,44 +57,38 @@ public class HighwaysAndHospitals {
             cityClasses[i] = new City(i, map[i]);
         }
 
-        ArrayList<ArrayList<City>> clusters = new ArrayList<>();
+//        int[] unionMap = unionFind(cities, n);
+//        System.out.println(Arrays.toString(unionMap));
+        int numClusters = unionFind(cities, n);
+
         // maybe bfs to find each city cluster...
-        int length = -1;
-        while (length != 0) {
-            ArrayList<City> cluster = getClusters(cityClasses);
-            length = cluster.size();
-            if (length != 0) {
-                clusters.add(cluster);
-            }
-        }
-        for (ArrayList<City> cluster : clusters) {
-            int mostConnections = Integer.MIN_VALUE;
-            City mostFriends = null;
-            int citiesVisited = 0;
-            while (citiesVisited < cluster.size()) {
+//        int length = -1;
+//        int numClusters = 0;
+//        while (length != 0) {
+//            ArrayList<City> cluster = getClusters(cityClasses);
+//            length = cluster.size();
+//            if (length != 0) {
+//                numClusters++;
+//            }
+//        }
 
-                for (City c : cluster) {
-                    if (c.getPossibleConnections().size() > mostConnections) {
-                        mostConnections = c.getPossibleConnections().size();
-                        mostFriends = c;
-                    }
-                }
-                citiesVisited++;
-                mostFriends.giveHospital();
-//                System.out.println("adding hospital to " + mostFriends.getCityNum() + ": " + numHospitals);
-                numHospitals++;
-                for (int cityNum : mostFriends.getPossibleConnections()) {
-                    cityClasses[cityNum].giveHighway();
-//                    System.out.println("adding highway to " + cityNum + ": " + numHighways);
-                    numHighways++;
-                    citiesVisited++;
-                }
-//                System.out.println(citiesVisited + "/" + cluster.size());
+        return (long) numClusters*hospitalCost + (long) (n-numClusters)*highwayCost;
+    }
+
+    private static int unionFind(int[][] cities, int numCities) {
+        long[] map = new long[numCities+1];
+        int numClusters = map.length;
+        for (int i = 0; i < cities.length; i++) {
+            // If there is no root already... make it the root
+            int root = cities[i][1];
+            while (map[root] != 0) {
+                root = (int) map[root];
             }
-//            System.out.println();
+            map[root] = cities[i][0];
+            numClusters--;
         }
 
-        return (long) numHospitals*hospitalCost + (long) numHighways*highwayCost;
+        return numClusters;
     }
 
     private static ArrayList<City> getClusters(City[] cities) {
