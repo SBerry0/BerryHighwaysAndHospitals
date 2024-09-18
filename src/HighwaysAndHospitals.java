@@ -61,50 +61,76 @@ public class HighwaysAndHospitals {
 //        System.out.println(Arrays.toString(unionMap));
         int numClusters = unionFind(cities, n);
         System.out.println(numClusters);
-        // maybe bfs to find each city cluster...
-//        int length = -1;
-//        int numClusters = 0;
-//        while (length != 0) {
-//            ArrayList<City> cluster = getClusters(cityClasses);
-//            length = cluster.size();
-//            if (length != 0) {
-//                numClusters++;
-//            }
-//        }
 
         return (long) numClusters*hospitalCost + (long) (n-numClusters)*highwayCost;
     }
 
     private static int unionFind(int[][] cities, int numCities) {
-        long[] map = new long[numCities+1];
+        int[] map = new int[numCities+1];
         int numClusters = numCities;
         System.out.println("union finding");
-        for (int i = 0; i < cities.length; i++) {
-            // If there is no root already... make it the root
-            long root = cities[i][1];
-            boolean doAdd = true;
-            System.out.println(Arrays.toString(map));
-            System.out.println(map[(int) root] + " =? " + map[cities[i][0]]);
-            System.out.println(Arrays.toString(cities[i]));
-            doAdd = ((map[(int) root] != map[cities[i][0]]) || map[cities[i][0]] == 0) && numClusters > 1;
-            while (map[(int) root] != 0) {
-//                System.out.println(map[(int) root]);
+        for (int[] edge : cities) {
+            int X = edge[0];
+            while (map[X] != 0) {
+                X = map[X];
+            }
+            while (map[edge[0]] != 0) {
+                int temp = map[edge[0]];
+                map[edge[0]] = X;
+                edge[0] = temp;
+            }
+            int Y = edge[1];
+            while (map[Y] != 0) {
+                Y = map[Y];
+            }
+            while (map[edge[1]] != 0) {
+                int temp = map[edge[1]];
+                map[edge[1]] = Y;
+                edge[1] = temp;
+            }
+            System.out.println(edge[0] + " =? " + edge[1]);
+            if (edge[0] != edge[1]) {
+//                int R = order(edge[0]);
+//                int S = order(edge[1]);
 
-                root = map[(int) root];
-            }
-            if (doAdd) {
-                map[(int) root] = cities[i][0];
+
+
+                map[edge[0]] = edge[1];
+                System.out.println(Arrays.toString(map));
                 numClusters--;
-            } else {
-                System.out.println("didn't add");
             }
         }
-        for (int i = 0; i < map.length; i++) {
-            System.out.print(" " + i + " ");
-        }
-        System.out.println();
-        System.out.println(Arrays.toString(map));
         return numClusters;
+
+
+
+
+//        for (int i = 0; i < cities.length; i++) {
+//            // If there is no root already... make it the root
+//            long root = cities[i][1];
+//            boolean doAdd = true;
+//            System.out.println(Arrays.toString(map));
+//            System.out.println(map[(int) root] + " =? " + map[cities[i][0]]);
+//            System.out.println(Arrays.toString(cities[i]));
+//            doAdd = ((map[(int) root] != map[cities[i][0]]) || map[cities[i][0]] == 0) && numClusters > 1;
+//            while (map[(int) root] != 0) {
+////                System.out.println(map[(int) root]);
+//
+//                root = map[(int) root];
+//            }
+//            if (doAdd) {
+//                map[(int) root] = cities[i][0];
+//                numClusters--;
+//            } else {
+//                System.out.println("didn't add");
+//            }
+//        }
+//        for (int i = 0; i < map.length; i++) {
+//            System.out.print(" " + i + " ");
+//        }
+//        System.out.println();
+//        System.out.println(Arrays.toString(map));
+//        return numClusters;
     }
 
     private static ArrayList<City> getClusters(City[] cities) {
