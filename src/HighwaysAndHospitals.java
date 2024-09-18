@@ -49,18 +49,18 @@ public class HighwaysAndHospitals {
             return (long) hospitalCost * n;
         }
 
-        ArrayList<Integer>[] map = makeMap(cities, n);
+//        ArrayList<Integer>[] map = makeMap(cities, n);
 //        System.out.println(java.util.Arrays.toString(map));
         // 1-indexed
-        City[] cityClasses = new City[n+1];
-        for (int i = 1; i < n+1; i++) {
-            cityClasses[i] = new City(i, map[i]);
-        }
+//        City[] cityClasses = new City[n+1];
+//        for (int i = 1; i < n+1; i++) {
+//            cityClasses[i] = new City(i, map[i]);
+//        }
 
 //        int[] unionMap = unionFind(cities, n);
 //        System.out.println(Arrays.toString(unionMap));
         int numClusters = unionFind(cities, n);
-
+        System.out.println(numClusters);
         // maybe bfs to find each city cluster...
 //        int length = -1;
 //        int numClusters = 0;
@@ -77,17 +77,33 @@ public class HighwaysAndHospitals {
 
     private static int unionFind(int[][] cities, int numCities) {
         long[] map = new long[numCities+1];
-        int numClusters = map.length;
+        int numClusters = numCities;
+        System.out.println("union finding");
         for (int i = 0; i < cities.length; i++) {
             // If there is no root already... make it the root
-            int root = cities[i][1];
-            while (map[root] != 0) {
-                root = (int) map[root];
-            }
-            map[root] = cities[i][0];
-            numClusters--;
-        }
+            long root = cities[i][1];
+            boolean doAdd = true;
+            System.out.println(Arrays.toString(map));
+            System.out.println(map[(int) root] + " =? " + map[cities[i][0]]);
+            System.out.println(Arrays.toString(cities[i]));
+            doAdd = ((map[(int) root] != map[cities[i][0]]) || map[cities[i][0]] == 0) && numClusters > 1;
+            while (map[(int) root] != 0) {
+//                System.out.println(map[(int) root]);
 
+                root = map[(int) root];
+            }
+            if (doAdd) {
+                map[(int) root] = cities[i][0];
+                numClusters--;
+            } else {
+                System.out.println("didn't add");
+            }
+        }
+        for (int i = 0; i < map.length; i++) {
+            System.out.print(" " + i + " ");
+        }
+        System.out.println();
+        System.out.println(Arrays.toString(map));
         return numClusters;
     }
 
