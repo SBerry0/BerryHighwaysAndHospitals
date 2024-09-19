@@ -15,161 +15,65 @@ import java.util.Queue;
 
 public class HighwaysAndHospitals {
 
-    /**
-     * TODO: Complete this function, cost(), to return the minimum cost to provide
-     *  hospital access for all citizens in Menlo County.
-     */
-    private static ArrayList<Integer>[] makeMap(int[][] cities, int n) {
-        ArrayList<Integer>[] map = new ArrayList[n+1];
-//        System.out.println(Arrays.toString(cities[228449]));
-        for (int i = 1; i < n+1; i++) {
-            map[i] = new ArrayList<Integer>();
-        }
-        for (int[] city : cities) {
-            if (city[0] == 19) {
-                System.out.println(city[0] + " to " + city[1]);
-            }
-            if (city[1] == 19) {
-                System.out.println(city[1] + " to " + city[0]);
-            }
-            // Both sides get linked
-            map[city[0]].add(city[1]);
-            map[city[1]].add(city[0]);
-        }
-
-        return map;
-    }
-
-
     public static long cost(int n, int hospitalCost, int highwayCost, int[][] cities) {
-        System.out.println("Hospital cost: " + hospitalCost);
-        System.out.println("Highway cost:" + highwayCost);
-        System.out.println("Num Cities: " + n);
+        // Starting case to check if the cost of hospitals are lower, making it constant time
         if (hospitalCost < highwayCost) {
             return (long) hospitalCost * n;
         }
 
-//        ArrayList<Integer>[] map = makeMap(cities, n);
-//        System.out.println(java.util.Arrays.toString(map));
-        // 1-indexed
-//        City[] cityClasses = new City[n+1];
-//        for (int i = 1; i < n+1; i++) {
-//            cityClasses[i] = new City(i, map[i]);
-//        }
-
-//        int[] unionMap = unionFind(cities, n);
-//        System.out.println(Arrays.toString(unionMap));
+        // Run union find to get the number of clusters
         int numClusters = unionFind(cities, n);
-        System.out.println(numClusters);
 
+        // Run calculation to get the price from the number of clusters and cast to a long
         return (long) numClusters*hospitalCost + (long) (n-numClusters)*highwayCost;
     }
 
     private static int unionFind(int[][] cities, int numCities) {
+        // Create 1-indexed map of cities to their roots
         int[] map = new int[numCities+1];
+        // Store number of cities to subtract from to get number of clusters without having to iterate through it
         int numClusters = numCities;
-        System.out.println("union finding");
         for (int[] edge : cities) {
-            System.out.println(Arrays.toString(edge));
+            // Union-finding to get the root of a city
             int X = edge[0];
             while (map[X] > 0) {
                 X = map[X];
             }
+            // Path compression for the first city
             while (map[edge[0]] > 0) {
                 int temp = map[edge[0]];
                 map[edge[0]] = X;
                 edge[0] = temp;
             }
+
+            // Regular union-find
             int Y = edge[1];
             while (map[Y] > 0) {
                 Y = map[Y];
             }
-
+            // Path compression for the second city
             while (map[edge[1]] > 0) {
                 int temp = map[edge[1]];
                 map[edge[1]] = Y;
                 edge[1] = temp;
             }
-            System.out.println(edge[0] + " =? " + edge[1]);
+
+            // If the edge isn't already in the map...
             if (edge[0] != edge[1]) {
+                // Make sure the city is currently a root
                 int R = Math.min(map[edge[0]], 0);
                 int S = Math.min(map[edge[1]], 0);
-
-
-                map[edge[1]] -= (map[edge[0]] < 0 ? map[edge[0]] + 1 : 1);
-                System.out.println(R + " <? " + S);
+                // Add the weight of one city to the other if it exists
+                map[edge[1]] += (map[edge[0]] < 0 ? map[edge[0]] - 1 : -1);
                 if (R < S) {
-                    System.out.println("weighted!");
                     map[edge[1]] = edge[0];
                 } else {
                     map[edge[0]] = edge[1];
                 }
-                System.out.println(Arrays.toString(map));
+                // Reduce the city from the available number of cities to be a cluster
                 numClusters--;
             }
         }
         return numClusters;
-
-
-
-
-//        for (int i = 0; i < cities.length; i++) {
-//            // If there is no root already... make it the root
-//            long root = cities[i][1];
-//            boolean doAdd = true;
-//            System.out.println(Arrays.toString(map));
-//            System.out.println(map[(int) root] + " =? " + map[cities[i][0]]);
-//            System.out.println(Arrays.toString(cities[i]));
-//            doAdd = ((map[(int) root] != map[cities[i][0]]) || map[cities[i][0]] == 0) && numClusters > 1;
-//            while (map[(int) root] != 0) {
-////                System.out.println(map[(int) root]);
-//
-//                root = map[(int) root];
-//            }
-//            if (doAdd) {
-//                map[(int) root] = cities[i][0];
-//                numClusters--;
-//            } else {
-//                System.out.println("didn't add");
-//            }
-//        }
-//        for (int i = 0; i < map.length; i++) {
-//            System.out.print(" " + i + " ");
-//        }
-//        System.out.println();
-//        System.out.println(Arrays.toString(map));
-//        return numClusters;
-    }
-
-    private static ArrayList<City> getClusters(City[] cities) {
-        ArrayList<City> cluster = new ArrayList<>();
-        Queue<City> possibilities = new LinkedList<>();
-        int i = -1;
-        // this gets slow
-        for (int j = 1; j < cities.length; j++) {
-            if (!cities[j].isBFSVisited()) {
-                i = j;
-                break;
-            }
-        }
-        // Return empty arraylist if all cities have been checked
-        if (i == -1) {
-            return new ArrayList<City>();
-        }
-        possibilities.add(cities[i]);
-        cities[i].setBFSVisited(true);
-        cluster.add(cities[i]);
-        while (!possibilities.isEmpty()) {
-            ArrayList<Integer> connections = possibilities.remove().getPossibleConnections();
-            for (int city : connections) {
-                if (!cities[city].isBFSVisited()) {
-                    possibilities.add(cities[city]);
-                    cities[city].setBFSVisited(true);
-                    cluster.add(cities[city]);
-                }
-            }
-        }
-//        System.out.println(cluster);
-        return cluster;
     }
 }
