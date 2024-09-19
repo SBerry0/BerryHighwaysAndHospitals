@@ -70,32 +70,40 @@ public class HighwaysAndHospitals {
         int numClusters = numCities;
         System.out.println("union finding");
         for (int[] edge : cities) {
+            System.out.println(Arrays.toString(edge));
             int X = edge[0];
-            while (map[X] != 0) {
+            while (map[X] > 0) {
                 X = map[X];
             }
-            while (map[edge[0]] != 0) {
+            while (map[edge[0]] > 0) {
                 int temp = map[edge[0]];
                 map[edge[0]] = X;
                 edge[0] = temp;
             }
             int Y = edge[1];
-            while (map[Y] != 0) {
+            while (map[Y] > 0) {
                 Y = map[Y];
             }
-            while (map[edge[1]] != 0) {
+
+            while (map[edge[1]] > 0) {
                 int temp = map[edge[1]];
                 map[edge[1]] = Y;
                 edge[1] = temp;
             }
             System.out.println(edge[0] + " =? " + edge[1]);
             if (edge[0] != edge[1]) {
-//                int R = order(edge[0]);
-//                int S = order(edge[1]);
+                int R = Math.min(map[edge[0]], 0);
+                int S = Math.min(map[edge[1]], 0);
 
 
-
-                map[edge[0]] = edge[1];
+                map[edge[1]] -= (map[edge[0]] < 0 ? map[edge[0]] + 1 : 1);
+                System.out.println(R + " <? " + S);
+                if (R < S) {
+                    System.out.println("weighted!");
+                    map[edge[1]] = edge[0];
+                } else {
+                    map[edge[0]] = edge[1];
+                }
                 System.out.println(Arrays.toString(map));
                 numClusters--;
             }
